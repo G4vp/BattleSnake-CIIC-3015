@@ -1,6 +1,8 @@
 import random
 from typing import List, Dict
 
+#https://battle-snake-g4vp.herokuapp.com/ | https://git.heroku.com/battle-snake-g4vp.git
+
 def avoid_walls(my_head: Dict[str,int], widthWall:int,heigthWall:int) -> str:
   possibleMove = 'right'
   if my_head['y'] == 0 and not my_head['x'] == 0:
