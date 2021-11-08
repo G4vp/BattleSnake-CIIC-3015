@@ -2,58 +2,61 @@ import random
 from typing import List, Dict
 
 #https://battle-snake-g4vp.herokuapp.com/ | https://git.heroku.com/battle-snake-g4vp.git
-
-def avoid_walls(my_head: Dict[str,int], widthWall:int,heigthWall:int) -> str:
-  possibleMove = 'right'
-  if my_head['y'] == 0 and not my_head['x'] == 0:
-    possibleMove = 'left'
-  elif my_head['x'] == heigthWall and not my_head['y'] == 0:
-    possibleMove = 'down'
-  elif my_head['y'] == 4 and my_head['x'] == 0:
-    possibleMove = 'right'
-  elif my_head['x'] == 0 and not my_head['y']+1 == heigthWall:
-    possibleMove = 'up'
-  else:
-    possibleMove = 'down'
-
-  print('---------',my_head)
-  return possibleMove
-
-
+def avoid_wall(my_head: Dict[str,int], height: int,width:int,possible_moves: List[str]) -> List[str]:
+    if my_head['x'] == 0 and 'left' in possible_moves: #Avoid the left wall
+        possible_moves.remove('left')
+    elif my_head['x'] == width-1 and 'right' in possible_moves: #Avoid the right wall
+        possible_moves.remove('right') 
+    if my_head["y"] == 0 and 'down' in possible_moves: #Avoid the bottom wall
+        possible_moves.remove('down') 
+    elif my_head['y'] == height-1 and 'up' in possible_moves: #Avoid the top wall
+        possible_moves.remove('up')
+    return possible_moves
+    
 def avoid_my_neck(my_head: Dict[str, int], my_body: List[dict], possible_moves: List[str]) -> List[str]:
+    
+    for i in range(1,len(my_body)):
+        if my_body[i]["x"] < my_body[0]["x"] and my_body[i]["y"] == my_body[0]["y"]and 'left' in possible_moves: 
+            possible_moves.remove("left")
 
-    my_neck = my_body[1]  # The segment of body right after the head is the 'neck'
+        elif my_body[i]["x"] > my_body[0]["x"] and my_body[i]["y"] == my_body[0]["y"] and 'right' in possible_moves:  
+            possible_moves.remove("right")
 
-    if my_neck["x"] < my_head["x"]:  # my neck is left of my head
-        possible_moves.remove("left")
-    elif my_neck["x"] > my_head["x"]:  # my neck is right of my head
-        possible_moves.remove("right")
-    elif my_neck["y"] < my_head["y"]:  # my neck is below my head
-        possible_moves.remove("down")
-    elif my_neck["y"] > my_head["y"]:  # my neck is above my head
-        possible_moves.remove("up")
+        if my_body[i]["y"] < my_body[0]["y"] and my_body[i]["x"] == my_body[0]["x"] and 'down' in possible_moves:  
+            possible_moves.remove("down")
+
+        elif my_body[i]["y"] > my_body[0]["y"] and my_body[i]["x"] == my_body[0]["x"] and 'up' in possible_moves:  
+            possible_moves.remove("up")
+    print('-----------',possible_moves)
+    return possible_moves
+
+def avoid_collisions(my_head: Dict[str,int], my_body: Dict[str,int],height:int,width:int, possible_moves:List[str]) -> List[str]:
+    avoid_wall(my_head,height,width,possible_moves)
+    avoid_my_neck(my_head,my_body,possible_moves)
 
     return possible_moves
 
 
 def choose_move(data: dict) -> str:
 
-    my_head = data["you"]["head"]  # A dictionary of x/y coordinates like {"x": 0, "y": 0}
-    my_body = data["you"]["body"]  # A list of x/y coordinate dictionaries like [ {"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 2, "y": 0} ]
+    my_head = data["you"]["head"]
+    my_body = data["you"]["body"]  
 
-    # TODO: uncomment the lines below so you can see what this data looks like in your output!
-    # print(f"~~~ Turn: {data['turn']}  Game Mode: {data['game']['ruleset']['name']} ~~~")
+    width = data["board"]["width"]
+    height = data["board"]["height"]
+
+
+
+
     print(f"All board data this turn: {data}")
-    # print(f"My Battlesnakes head this turn is: {my_head}")
-    # print(f"My Battlesnakes body this turn is: {my_body}")
+
 
     possible_moves = ["up", "down", "left", "right"]
 
     # Don't allow your Battlesnake to move back in on it's own neck
-    possible_moves = avoid_my_neck(my_head, my_body, possible_moves)
+    possible_moves = avoid_collisions(my_head,my_body,height,width,possible_moves)
 
-
-    move = 'left'
+    move = random.choice(possible_moves)
 
     print(f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}")
 
