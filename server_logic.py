@@ -11,9 +11,9 @@ def avoid_wall(my_head: Dict[str,int], height: int,width:int,possible_moves: Lis
         possible_moves.remove('down') 
     elif my_head['y'] == height-1 and 'up' in possible_moves: #Avoid the top wall
         possible_moves.remove('up')
-    return possible_moves
     
-def avoid_my_neck(my_head: Dict[str, int], my_body: List[dict], possible_moves: List[str]) -> List[str]:
+    
+def avoid_my_neck(my_body: List[dict], possible_moves: List[str]) -> List[str]:
     
     for i in range(1,len(my_body)):
         if my_body[i]["x"] < my_body[0]["x"] and my_body[i]["y"] == my_body[0]["y"]and 'left' in possible_moves: 
@@ -27,13 +27,31 @@ def avoid_my_neck(my_head: Dict[str, int], my_body: List[dict], possible_moves: 
 
         elif my_body[i]["y"] > my_body[0]["y"] and my_body[i]["x"] == my_body[0]["x"] and 'up' in possible_moves:  
             possible_moves.remove("up")
-    print('-----------',possible_moves)
+    
+    
+def avoid_snakes(my_head: Dict[str, int], snakes:List[Dict[str,str]], possible_moves: List[str]) -> List[str]:
+    for i in range(1,len(snakes)):
+        for j in range(len(snakes[i]['body'])):
+            if snakes[i]["body"][j]["x"] < my_head["x"] and snakes[i]["body"][j]["y"] == my_head["y"]and 'left' in possible_moves: 
+                possible_moves.remove("left")
+
+            elif snakes[i]["body"][j]["x"] > my_head["x"] and snakes[i]["body"][j]["y"] == my_head["y"] and 'right' in possible_moves:  
+                possible_moves.remove("right")
+
+            if snakes[i]["body"][j]["y"] < my_head["y"] and snakes[i]["body"][j]["x"] == my_head["x"] and 'down' in possible_moves:  
+                possible_moves.remove("down")
+
+            elif snakes[i]["body"][j]["y"] > my_head["y"] and snakes[i]["body"][j]["x"] == my_head["x"] and 'up' in possible_moves:  
+                possible_moves.remove("up")
+    
     return possible_moves
 
-def avoid_collisions(my_head: Dict[str,int], my_body: Dict[str,int],height:int,width:int, possible_moves:List[str]) -> List[str]:
+def avoid_collisions(my_head: Dict[str,int], my_body: Dict[str,int],height:int,width:int,snakes:List[Dict[str,str]] ,possible_moves:List[str]) -> List[str]:
     avoid_wall(my_head,height,width,possible_moves)
-    avoid_my_neck(my_head,my_body,possible_moves)
+    avoid_my_neck(my_body,possible_moves)
 
+    if(len(snakes) > 1):
+        avoid_snakes(my_head,snakes,possible_moves)
     return possible_moves
 
 
@@ -45,7 +63,7 @@ def choose_move(data: dict) -> str:
     width = data["board"]["width"]
     height = data["board"]["height"]
 
-
+    snakes = data["board"]["snakes"]
 
 
     print(f"All board data this turn: {data}")
@@ -54,7 +72,7 @@ def choose_move(data: dict) -> str:
     possible_moves = ["up", "down", "left", "right"]
 
     # Don't allow your Battlesnake to move back in on it's own neck
-    possible_moves = avoid_collisions(my_head,my_body,height,width,possible_moves)
+    possible_moves = avoid_collisions(my_head,my_body,height,width,snakes,possible_moves,)
 
     move = random.choice(possible_moves)
 
