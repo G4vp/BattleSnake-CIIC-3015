@@ -32,19 +32,17 @@ def avoid_my_neck(my_body: List[dict], possible_moves: List[str]) -> List[str]:
 def avoid_snakes(my_head: Dict[str, int], snakes:List[Dict[str,str]], possible_moves: List[str]) -> List[str]:
     for i in range(1,len(snakes)):
         for j in range(len(snakes[i]['body'])):
-            if snakes[i]["body"][j]["x"] < my_head["x"] and snakes[i]["body"][j]["y"] == my_head["y"]and 'left' in possible_moves: 
-                possible_moves.remove("left")
-
-            elif snakes[i]["body"][j]["x"] > my_head["x"] and snakes[i]["body"][j]["y"] == my_head["y"] and 'right' in possible_moves:  
-                possible_moves.remove("right")
-
-            if snakes[i]["body"][j]["y"] < my_head["y"] and snakes[i]["body"][j]["x"] == my_head["x"] and 'down' in possible_moves:  
-                possible_moves.remove("down")
-
-            elif snakes[i]["body"][j]["y"] > my_head["y"] and snakes[i]["body"][j]["x"] == my_head["x"] and 'up' in possible_moves:  
-                possible_moves.remove("up")
+            snakeCood = (snakes[i]['body'][j]['x'],snakes[i]['body'][j]['y'])
+            if (my_head['x']+1,my_head['y']) == snakeCood:
+                possible_moves.remove('right')
+            if (my_head['x']-1,my_head['y']) == snakeCood:
+                possible_moves.remove('left')
+            if (my_head['x'],my_head['y']-1) == snakeCood:
+                possible_moves.remove('down')
+            if (my_head['x'],my_head['y']+1) == snakeCood:
+                possible_moves.remove('up')
     
-    return possible_moves
+    
 
 def avoid_collisions(my_head: Dict[str,int], my_body: Dict[str,int],height:int,width:int,snakes:List[Dict[str,str]] ,possible_moves:List[str]) -> List[str]:
     avoid_wall(my_head,height,width,possible_moves)
@@ -58,12 +56,11 @@ def avoid_collisions(my_head: Dict[str,int], my_body: Dict[str,int],height:int,w
 def choose_move(data: dict) -> str:
 
     my_head = data["you"]["head"]
-    my_body = data["you"]["body"]  
-
+    my_body = data["you"]["body"]
+    snakes = data["board"]["snakes"]
+    
     width = data["board"]["width"]
     height = data["board"]["height"]
-
-    snakes = data["board"]["snakes"]
 
 
     print(f"All board data this turn: {data}")
@@ -79,3 +76,5 @@ def choose_move(data: dict) -> str:
     print(f"{data['game']['id']} MOVE {data['turn']}: {move} picked from all valid options in {possible_moves}")
 
     return move
+
+print('1')
