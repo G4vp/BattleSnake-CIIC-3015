@@ -25,8 +25,8 @@ def handle_info():
     return {
         "apiversion": "1",
         "author": "G4VP",  # TODO: Your Battlesnake Username
-        "color": "#ffcccc",  # TODO: Personalize
-        "head": "snowman",  # TODO: Personalize
+        "color": "#ff0066",  # TODO: Personalize
+        "head": "replit-mark",  # TODO: Personalize
         "tail": "round-bum",  # TODO: Personalize
     }
 
