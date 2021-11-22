@@ -110,16 +110,16 @@ def CloseFood(data:Dict) -> tuple:
 
 def food_finder(my_head:Dict[str,int],closerFood:tuple,possible_moves:List[str]):
   lst = possible_moves[:]
-  if abs((my_head['x']-1)-closerFood['coord']['x']) +  abs(my_head['y'] - closerFood['coord']['y']) <   closerFood['distance'] and 'right' in possible_moves:
+  if my_head['x']+1 > closerFood['coord']['x'] and 'right' in possible_moves:
     print('food remove right')
     possible_moves.remove('right')
-  if abs((my_head['x']+1)-closerFood['coord']['x']) +  abs(my_head['y'] - closerFood['coord']['y']) <  closerFood['distance']  and 'left' in possible_moves:
+  if  my_head['x']-1 < closerFood['coord']['x'] and 'left' in possible_moves:
     print('food remove left')
     possible_moves.remove('left')
-  if abs(my_head['x']-closerFood['coord']['x']) +  abs((my_head['y']+1) - closerFood['coord']['y']) < closerFood['distance']  and 'down' in possible_moves:
+  if  my_head['y']-1 < closerFood['coord']['y'] and 'down' in possible_moves:
     print('food remove down')
     possible_moves.remove('down')
-  if abs(my_head['x']-closerFood['coord']['x']) +  abs((my_head['y']-1) - closerFood['coord']['y']) <   closerFood['distance'] and 'up' in possible_moves:
+  if  my_head['y']+1 > closerFood['coord']['y'] and 'up' in possible_moves:
     print('food remove up')
     possible_moves.remove('up')
 
